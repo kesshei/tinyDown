@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using miniftp.Model;
@@ -23,7 +24,7 @@ namespace miniftp.Controllers
         {
             return View();
         }
-        public IActionResult Down(string file,string key)
+        public IActionResult Down(string file, string key)
         {
             var path2 = this.Configuration.GetSection("pathconfig").Get<PathConfig>();
             var fileName = Path.GetFileName(file);
@@ -35,13 +36,61 @@ namespace miniftp.Controllers
             {
                 return NotFound();
             }
-            if (provider.TryGetContentType(fileName, out var contentType) && System.IO.File.Exists(file) )
+            if (provider.TryGetContentType(fileName, out var contentType) && System.IO.File.Exists(file))
             {
                 return PhysicalFile(file, contentType, fileName);
             }
             else
             {
                 return NotFound();
+            }
+        }
+        public IActionResult Upload()
+        {
+            try
+            {
+                var rootDir = Path.Combine(AppContext.BaseDirectory, "file");
+                var rootDirTemp = Path.Combine(AppContext.BaseDirectory, "temp");
+                if (!Directory.Exists(rootDir))
+                {
+                    Directory.CreateDirectory(rootDir);
+                }
+                if (!Directory.Exists(rootDirTemp))
+                {
+                    Directory.CreateDirectory(rootDirTemp);
+                }
+                if (this.HttpContext.Request.Form.Files.Any())
+                {
+                    foreach (var item in this.HttpContext.Request.Form.Files)
+                    {
+                        var filename = item.FileName;
+
+                        var path = Path.Combine(rootDirTemp, filename);
+                        var truePath = Path.Combine(rootDir, filename);
+                        if (System.IO.File.Exists(path))
+                        {
+                            System.IO.File.Delete(path);
+                        }
+                        using (var stream = System.IO.File.Create(path))
+                        {
+                            item.CopyTo(stream);
+                        }
+                        if (System.IO.File.Exists(truePath))
+                        {
+                            System.IO.File.Delete(truePath);
+                        }
+                        System.IO.File.Move(path, truePath);
+                    }
+                    return Json(new { status = "success" });
+                }
+                else
+                {
+                    throw new Exception("文件不存在!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "error", msg = ex.Message });
             }
         }
     }
