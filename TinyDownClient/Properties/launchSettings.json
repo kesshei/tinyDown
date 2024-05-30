@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TinyDownClient": {
+      "commandName": "Project",
+      "commandLineArgs": "local=C:\\Users\\Administrator\\Desktop\\yanzhengma.zip server=E:\\新建.zip"
+    }
+  }
+}

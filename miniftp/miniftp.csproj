@@ -30,4 +30,8 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DownModel\DownModel.csproj" />
+  </ItemGroup>
+
 </Project>
