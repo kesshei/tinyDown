@@ -100,6 +100,7 @@ namespace miniftp.Controllers
         [HttpGet("/ws")]
         public async Task WS(string token, string local, string server)
         {
+            Console.WriteLine("开始连接!");
             var tokens = this.Configuration.GetSection("tokens").Get<List<string>>();
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
