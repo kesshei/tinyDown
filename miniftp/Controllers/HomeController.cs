@@ -42,8 +42,6 @@ namespace miniftp.Controllers
             }
             if (provider.TryGetContentType(fileName, out var contentType) && System.IO.File.Exists(file))
             {
-                FileResult result = new FileResult();
-                return 
                 return PhysicalFile(file, contentType, fileName);
             }
             else
