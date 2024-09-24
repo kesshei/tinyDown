@@ -26,6 +26,16 @@ namespace miniftp.Controllers
         }
         public IActionResult Index()
         {
+            Console.WriteLine();
+            var headers = Request.Headers;
+            var content = new StreamReader(Request.Body).ReadToEndAsync().Result;
+            var ip4 = HttpContext.Connection.RemoteIpAddress.MapToIPv4();
+            Console.WriteLine(ip4);
+            foreach (var header in headers)
+            {
+                Console.WriteLine($"Header: {header.Key} Value: {header.Value}");
+            }
+
             return View();
         }
         public IActionResult Down(string file, string key)
